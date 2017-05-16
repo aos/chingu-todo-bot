@@ -29,26 +29,34 @@ function handleQueries(req, res) {
   let timestamp = Math.round(new Date().getTime()/1000.0);
 
   if (req.text) {
+
     let text = req.text;
     let user_id = req.user_id;
+    let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
+
     if (text.includes("add")) {
       // Get todo
       var todo = text.substring(4);
+      todo += ` <!date^${timestamp}^({date_pretty} @ {time}|May>)`
       // Add to array
       commands.add(todoArray, todo)
-      console.log(todoArray);
     }
+
     if (text.includes("delete")) {
       // Get todo
       var todo = text.substring(7);
       // Delete from array
       commands.delete(todoArray, todo);
-      console.log(todoArray);
     }
-    let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
+
+    if (text.includes("list")) {
+      // List todos
+      commands.view(todoArray);
+    }
+
     let data = {
       response_type: 'ephemeral',
-      text: `Todos:\n${todoArray[0]}`
+      text: commands.view(todoArray)
     };
     res.json(data);
   }
