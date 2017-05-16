@@ -11,9 +11,9 @@ function deleteTodo(array, todo) {
 }
 
 function viewTodos(array) {
-  var todos = "*Todos:*\n";
+  var todos = "";
   for (var i = 0; i < array.length; i++) {
-    todos += array[i] + "\n";
+    todos += "• " + array[i] + "\n";
   }
   return todos;
 }

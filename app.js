@@ -26,7 +26,8 @@ app.post('/', function(req, res) {
 });
 
 function handleQueries(req, res) {
-  let timestamp = Math.round(new Date().getTime()/1000.0);
+  // Get unix timestamp
+  let timestamp = Math.round(Date.now()/1000.0);
 
   if (req.text) {
 
@@ -56,7 +57,12 @@ function handleQueries(req, res) {
 
     let data = {
       response_type: 'ephemeral',
-      text: commands.view(todoArray)
+      text: "*Todos*",
+      attachments: [
+        {
+          text: commands.view(todoArray)
+        }
+      ]
     };
     res.json(data);
   }
