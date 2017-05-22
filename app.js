@@ -38,23 +38,38 @@ function handleQueries(req, res) {
 
   if (req.text) {
     let text = req.text;
-    console.log(text);
     let user_id = req.user_id;
     let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
 
     if (text.indexOf("add") == 0) {
-      // Get todo
-      var todo = text.substring(4);
-      todo += ` <!date^${timestamp}^({date_pretty} @ {time}|May>)`
+      // Create todo object
+      let todo = {
+        text: text.substring(4),
+        completed: false,
+        time: timestamp,
+        id: (todoArray.length == 0 ? 1 : (todoArray.length + 1))
+      }
       // Add to array
-      commands.add(todoArray, todo)
+      commands.add(todoArray, todo);
     }
 
     if (text.indexOf("delete") == 0) {
       // Get todo
-      var todo = text.substring(7);
+      let todo = text.substring(7);
       // Delete from array
       commands.delete(todoArray, todo);
+    }
+
+    if (text.indexOf("done") == 0) {
+      let todo = text.substring(5);
+      let todoTS = timestamp;
+      if (todo = Number(todo)) {
+        commands.done(todoArray, todo, todoTS)
+      }
+      else {
+        console.error("Not a valid number");
+        return res.json({text: "Error: Use `/test done #` where `#` is todo number"});
+      }
     }
 
     if (text.indexOf("list") == 0) {
@@ -63,11 +78,12 @@ function handleQueries(req, res) {
     }
 
     let data = {
-      response_type: 'in_channel',
-      text: "*Todos*",
+      response_type: 'ephemeral',
       attachments: [
         {
-          text: commands.view(todoArray)
+          title: "Todos",
+          text: "```" + commands.view(todoArray) + "```",
+          mrkdwn_in: ["text"]
         }
       ]
     };
