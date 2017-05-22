@@ -28,9 +28,8 @@ app.post('/', function(req, res) {
 function handleQueries(req, res) {
   // Validate token
   if (req.token !== "nPJ9nsPaIBb9dv2MDtDRY7sL") {
-    res.data.text = "Error: Invalid Token";
     console.error("Invalid Token");
-    return 1
+    return res.json({text: "Error: Invalid Token"});
   }
 
   // Get unix timestamp
