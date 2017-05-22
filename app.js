@@ -26,16 +26,23 @@ app.post('/', function(req, res) {
 });
 
 function handleQueries(req, res) {
+  // Validate token
+  if (req.token !== "nPJ9nsPaIBb9dv2MDtDRY7sL") {
+    res.data.text = "Error: Invalid Token";
+    console.error("Invalid Token");
+    return 1
+  }
+
   // Get unix timestamp
   let timestamp = Math.round(Date.now()/1000.0);
 
   if (req.text) {
-
     let text = req.text;
+    console.log(text);
     let user_id = req.user_id;
     let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
 
-    if (text.includes("add")) {
+    if (text.indexOf("add") == 0) {
       // Get todo
       var todo = text.substring(4);
       todo += ` <!date^${timestamp}^({date_pretty} @ {time}|May>)`
@@ -43,20 +50,20 @@ function handleQueries(req, res) {
       commands.add(todoArray, todo)
     }
 
-    if (text.includes("delete")) {
+    if (text.indexOf("delete") == 0) {
       // Get todo
       var todo = text.substring(7);
       // Delete from array
       commands.delete(todoArray, todo);
     }
 
-    if (text.includes("list")) {
+    if (text.indexOf("list") == 0) {
       // List todos
       commands.view(todoArray);
     }
 
     let data = {
-      response_type: 'ephemeral',
+      response_type: 'in_channel',
       text: "*Todos*",
       attachments: [
         {
