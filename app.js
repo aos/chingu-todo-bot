@@ -50,6 +50,13 @@ function handleQueries(req, res) {
         time: timestamp,
         id: (todoArray.length == 0 ? 1 : (todoArray.length + 1))
       }
+
+      todoArray.forEach(function(e){
+          if(e.id === todo.id){
+              todo.id = todo.id + '.' + Math.random().toFixed(2);
+          }
+      });
+
       // Add to array
       commands.add(todoArray, todo);
     }
