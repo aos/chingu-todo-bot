@@ -53,7 +53,7 @@ function handleQueries(req, res) {
 
       todoArray.forEach(function(e){
           if(e.id === todo.id){
-              todo.id = todo.id + '.' + Math.random().toFixed(2);
+              todo.id = todo.id + Math.random().toFixed(2);
           }
       });
 
