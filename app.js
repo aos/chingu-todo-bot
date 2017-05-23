@@ -10,11 +10,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // Start server
-const server = app.listen(3000, () => {
-  console.log('Express server listening on port %d...', server.address().port);
+const port = process.env.PORT || 3000;
+app.listen(port, function(){
+
+    console.log(`listening on port: ${port}`);
+
 });
 
-var todoArray = [];
+let todoArray = [];
 
 // Handle GET requests
 app.get('/', function(req, res) {
