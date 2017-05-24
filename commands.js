@@ -26,10 +26,10 @@ function viewTodos(array) {
   var todos = "";
   for (let todo of array) {
     if (todo.completed) {
-      todos += `${todo.id}\t [X]\t${todo.text}\t<!date^${todo.doneTS}^(completed: {date_pretty} @ {time}|May>)\n`;
+      todos += `${todo.id}\t[X]\t${todo.text}\t<!date^${todo.doneTS}^(completed: {date_pretty} @ {time}|May>)\n`;
     }
     else {
-      todos += `${todo.id}\t [ ]\t${todo.text}\t<!date^${todo.time}^({date_pretty} @ {time}|May>)\n`;
+      todos += `${todo.id}\t[ ]\t${todo.text}\t<!date^${todo.time}^({date_pretty} @ {time}|May>)\n`;
     }
   }
   return todos;

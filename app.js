@@ -43,7 +43,7 @@ function handleQueries(req, res) {
     let user_id = req.user_id;
     let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
 
-    if (text.indexOf("add") == 0) {
+    if (text.startsWith("add")) {
       // Create todo object
       let todo = {
         text: text.substring(4),
@@ -52,8 +52,8 @@ function handleQueries(req, res) {
         id: (todoArray.length == 0 ? 1 : (todoArray.length + 1))
       }
 
-      todoArray.forEach(function(e){
-          if(e.id === todo.id){
+      todoArray.forEach(function(e) {
+          if(e.id === todo.id) {
               todo.id = todo.id + Number(Math.random().toFixed(1));
           }
       });
@@ -62,14 +62,16 @@ function handleQueries(req, res) {
       commands.add(todoArray, todo);
     }
 
-    if (text.indexOf("delete") == 0) {
+    // Delete todo
+    if (text.startsWith("delete")) {
       // Get todo
       let todo = text.substring(7);
       // Delete from array
       commands.delete(todoArray, todo);
     }
 
-    if (text.indexOf("done") == 0) {
+    // Complete todo
+    if (text.startsWith("done")) {
       let todo = text.substring(5);
       let todoTS = timestamp;
       if (todo = Number(todo)) {
@@ -77,12 +79,12 @@ function handleQueries(req, res) {
       }
       else {
         console.error("Not a valid number");
-        return res.json({text: "Error: Use `/test done #` where `#` is todo number"});
+        return res.json({text: "Error: Use `/todo done #` where `#` is todo number"});
       }
     }
-
-    if (text.indexOf("list") == 0) {
-      // List todos
+    
+    // Get list
+    if (text.startsWith("list")) {
       commands.view(todoArray);
     }
 
