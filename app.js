@@ -22,6 +22,7 @@ let todoArray = [];
 app.get('/', function(req, res) {
   handleQueries(req.query, res);
 });
+
 // Handle POST requests
 app.post('/', function(req, res) {
   handleQueries(req.body, res);
