@@ -1,3 +1,7 @@
+
+
+
+
 function addTodo(array, todo) {
   return array.push(todo);
 }
@@ -13,8 +17,8 @@ function deleteTodo(array, todo) {
 function completeTodo(array, todo, todoTS) {
   for (let t of array) {
     // Check to see if given the todo ID
-    if (typeof todo == "number") {
-      if (t.id == todo) {
+    if (typeof todo === "number") {
+      if (t.id === todo) {
         t.completed = true;
         t.doneTS = todoTS;
       }

@@ -49,7 +49,7 @@ function handleQueries(req, res) {
         text: text.substring(4),
         completed: false,
         time: timestamp,
-        id: (todoArray.length == 0 ? 1 : (todoArray.length + 1))
+        id: (todoArray.length === 0 ? 1 : (todoArray.length + 1))
       }
 
       todoArray.forEach(function(e) {
