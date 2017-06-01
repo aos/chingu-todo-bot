@@ -2,8 +2,33 @@
  * Created by Vampiire on 6/1/17.
  */
 
+// require the commands file which defines the commands the bot will accept from the user
 const commands = require('./commands');
 
+// require mongoose to enable interaction with mLab database
+const mongoose = require('mongoose');
+
+// connect mongoose to mLab database
+// UN: chingu-todo, PW: todoBOT
+mongoose.connect('mongodb://chingu-todo:todoBOT@ds161121.mlab.com:61121/todo-bot');
+
+// create a schema for what is passed to the database
+let newListSchema = new mongoose.Schema({
+    // either channel or user ID will replace the default _id created by the database
+    _id: String,
+    item: {
+        item: String,
+        created: Date,
+        completed: Boolean,
+        id: String
+    }
+});
+
+// create model that implements the list Schema
+let listItem = mongoose.model('listItem', newListSchema);
+
+
+// todoArray used for new todo lists
 let todoArray = [];
 
 module.exports = function(app) {
