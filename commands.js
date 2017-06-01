@@ -1,7 +1,3 @@
-
-
-
-
 function addTodo(array, todo) {
   return array.push(todo);
 }
@@ -27,7 +23,7 @@ function completeTodo(array, todo, todoTS) {
 }
 
 function viewTodos(array) {
-  var todos = "";
+  let todos = "";
   for (let todo of array) {
     if (todo.completed) {
       todos += `${todo.id}\t[X]\t${todo.text}\t<!date^${todo.doneTS}^(completed: {date_pretty} @ {time}|May>)\n`;
@@ -44,4 +40,4 @@ module.exports = {
   delete: deleteTodo,
   view: viewTodos,
   done: completeTodo
-}
+};
