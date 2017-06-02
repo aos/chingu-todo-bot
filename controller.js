@@ -81,7 +81,7 @@ module.exports = function(app) {
             let text = req.text,
                 user_id = req.user_id,
                 command = req.text.substring(0, text.indexOf(' ')),
-                listItem = req.text.substring(text.indexOf(' ')+1);
+                listText = req.text.substring(text.indexOf(' ')+1);
 
     // search for the slack user's list based on their slack ID
             list.find({_id: user_id}, function(err, doc){
@@ -99,7 +99,7 @@ module.exports = function(app) {
 
                             // this was tricky. doc is returned as an array with the object as an element within it. use [0]
                             // to define the first element in the array (the object we want to work with)
-                                doc[0].list.push({_id: length, listItem : listItem});
+                                doc[0].list.push({_id: length, listItem : listText});
 
                                 doc[0].save(function(err){
                                     if(err) throw err;
@@ -114,7 +114,7 @@ module.exports = function(app) {
                                 list.create({
                                     _id: user_id,
                                     list: [
-                                        { _id: 0, listItem : listItem }
+                                        { _id: 0, listItem : listText }
                                     ]
                                 }, function(err){
                                     if(err) throw err;
@@ -122,14 +122,25 @@ module.exports = function(app) {
 
                                 });
                             }
-
-
                         break;
                     case 'view':
                          break;
                     case 'complete':
+                    // iterates through the list array and marks the user's selection as complete
+                        doc[0].list.forEach(function(e){
+                        // tests loose equality becaue the id is a number but the text passed by the user is a string
+                            if(e._id == listText){
 
+                        // marks the item as completed and adds a timestamp for the completion, saves to the database
+                                e.completed = true;
+                                e.timestampCompleted = Date.now();
 
+                                doc[0].save(function(err){
+                                    if(err) throw err;
+                                    console.log(`item at index ${listText} has been marked as complete`);
+                                });
+                            }
+                        });
                         break;
                     case 'delete':
                         break;
