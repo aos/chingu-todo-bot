@@ -17,9 +17,9 @@ let listSchema = new mongoose.Schema({
     // either channel or user ID will replace the default _id created by the database
     _id: String,
     item: {
-        id: String,
+        id: Number,
         listItem: String,
-        timestampCreated: {type: Date, default: (Date.now() / 1000)},
+        timestampCreated: {type: Date, default: Date.now()},
         completed: {type: Boolean, default: false},
         timestampCompleted: Date
     }
@@ -50,21 +50,10 @@ PLAN:
 // create model that implements the list Schema
 let list = mongoose.model('list', listSchema);
 
-// let newItem = list(
-//     {_id: user_id,
-//         item: {
-//             id: id,
-//             listItem: text,
-//         }
-//     }
-//
-// );
-
-
 
 // // todoArray used for new todo lists DEPRACATED
-
-let todoArray = [];
+//
+// let todoArray = [];
 
 module.exports = function(app) {
 
@@ -86,7 +75,7 @@ module.exports = function(app) {
         }
 
         // Get unix timestamp
-        let timestamp = Math.round(Date.now() / 1000.0);
+        // let timestamp = Math.round(Date.now() / 1000.0);
 
 
         // check if a collection for that user / channel already exists
@@ -102,21 +91,34 @@ module.exports = function(app) {
 
             if (command === 'add') {
                 // Create todo object
-                let todo = {
-                    text: listItem,
-                    completed: false,
-                    time: timestamp,
-                    id: (todoArray.length === 0 ? 1 : (todoArray.length + 1))
-                };
+                // let todo = {
+                //     text: listItem,
+                //     completed: false,
+                //     time: timestamp,
+                //     id: (todoArray.length === 0 ? 1 : (todoArray.length + 1))
+                // };
 
-                todoArray.forEach(function (e) {
-                    if (e.id === todo.id) {
-                        todo.id = todo.id + Number(Math.random().toFixed(1));
+                let newItem = list(
+                    {_id: user_id,
+                        item: {
+                            id: 1,
+                            listItem: listItem,
+                        }
                     }
+
+                ).save(function(err){
+                    if(err) throw err;
+                    console.log('saved');
                 });
 
+                // todoArray.forEach(function (e) {
+                //     if (e.id === todo.id) {
+                //         todo.id = todo.id + Number(Math.random().toFixed(1));
+                //     }
+                // });
+
                 // Add to array
-                commands.add(todoArray, todo);
+                // commands.add(todoArray, todo);
             }
 
             // Delete todo
@@ -150,7 +152,7 @@ module.exports = function(app) {
                 attachments: [
                     {
                         title: "Todos",
-                        text: "```" + commands.view(todoArray) + "```",
+                        text: "```" + /*commands.view(todoArray) + */"```",
                         mrkdwn_in: ["text"]
                     }
                 ]
