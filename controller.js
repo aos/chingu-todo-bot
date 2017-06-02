@@ -122,14 +122,14 @@ module.exports = function(app) {
             // Delete todo
             if (command === 'delete') {
                 // Get todo
-                let todo = text.substring(7);
+                let todo = listItem;
                 // Delete from array
                 commands.delete(todoArray, todo);
             }
 
             // Complete todo
             if (command === 'done') {
-                let todo = text.substring(5);
+                let todo = listItem;
                 let todoTS = timestamp;
                 if (todo = Number(todo)) {
                     commands.done(todoArray, todo, todoTS)
