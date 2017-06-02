@@ -83,49 +83,60 @@ module.exports = function(app) {
                 command = req.text.substring(0, text.indexOf(' ')),
                 listItem = req.text.substring(text.indexOf(' ')+1);
 
-            switch(command){
-                case 'add':
-                    // search for the slack user's list based on their slack ID
-                    list.find({_id: user_id}, function(err, doc){
+    // search for the slack user's list based on their slack ID
+            list.find({_id: user_id}, function(err, doc){
 
-                        // if the user already has a list then push the "added" item into that list and save to the database
-                        if(doc.length > 0){
-                            let length = doc[0].list.length;
-                            // modify doc add new item
+                switch(command){
+                    case 'add':
+                            // if the user already has a list then push the "added" item into that list and save to the database
+                            // doc is always returned as an array. to determine if the list exists check the length, if
+                            // it is empty then it does not exist and move to the else statement
+                            if(doc.length > 0){
 
-                            doc[0].list.push({_id: length, listItem : listItem});
+                            // the length of the array is passed as the ID. although arrays are 0 indexed because the item
+                            // is assigned its ID before being pushed it will provide the expected value
+                                let length = doc[0].list.length;
 
-                            doc[0].save(function(err){
-                                if(err) throw err;
-                                console.log('new item added to an existing todo list document array');
-                            });
-                        }
+                            // this was tricky. doc is returned as an array with the object as an element within it. use [0]
+                            // to define the first element in the array (the object we want to work with)
+                                doc[0].list.push({_id: length, listItem : listItem});
 
-                        // if the user does not already have a list in the collection then create one and pass their slack ID
-                        // as well as their list item as the first element in the list array
-                        else{
+                                doc[0].save(function(err){
+                                    if(err) throw err;
+                                    console.log('new item added to an existing todo list document array');
+                                });
+                            }
 
-                            list.create({
-                                _id: user_id,
-                                list: [
-                                    { _id: 0, listItem : listItem }
-                                ]
-                            }, function(err){
-                                if(err) throw err;
-                                console.log('added a new slack user todo list document into the collection');
+                            // if the user does not already have a list in the collection then create one and pass their slack ID
+                            // as well as their list item as the first element in the list array
+                            else{
 
-                            });
-                        }
+                                list.create({
+                                    _id: user_id,
+                                    list: [
+                                        { _id: 0, listItem : listItem }
+                                    ]
+                                }, function(err){
+                                    if(err) throw err;
+                                    console.log('added a new slack user todo list document into the collection');
 
-                    });
-                    break;
-                case 'view':
-                     break;
-                case 'complete':
-                    break;
-                case 'delete':
-                    break;
-            }
+                                });
+                            }
+
+
+                        break;
+                    case 'view':
+                         break;
+                    case 'complete':
+
+
+                        break;
+                    case 'delete':
+                        break;
+                }
+
+                if(err) throw err;
+            });
 
 
 
