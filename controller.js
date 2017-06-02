@@ -78,65 +78,76 @@ module.exports = function(app) {
         // pull the request sent from slack to the bot. extract the text, and slack user ID
         // the text will contain both the command (followed by a space) and the string associated with the command
         // (after the space) as seen by the substrings
-
             let text = req.text,
                 user_id = req.user_id,
                 command = req.text.substring(0, text.indexOf(' ')),
                 listItem = req.text.substring(text.indexOf(' ')+1);
 
-    // add command is received by the bot
-    // add a new list item
-            if (command === 'add') {
+            switch(command){
+                case 'add':
+                    // search for the slack user's list based on their slack ID
+                    list.find({_id: user_id}, function(err, doc){
 
-            // search for the slack user's list based on their slack ID
-                list.find({_id: user_id}, function(err, doc){
+                        // if the user already has a list then push the "added" item into that list and save to the database
+                        if(doc.length > 0){
+                            let length = doc[0].list.length;
+                            // modify doc add new item
 
-                // if the user already has a list then push the "added" item into that list and save to the database
-                    if(doc.length > 0){
-                        let length = doc[0].list.length;
-                        // modify doc add new item
+                            doc[0].list.push({_id: length, listItem : listItem});
 
-                        doc[0].list.push({_id: length, listItem : listItem});
+                            doc[0].save(function(err){
+                                if(err) throw err;
+                                console.log('new item added to an existing todo list document array');
+                            });
+                        }
 
-                        doc[0].save(function(err){
-                            if(err) throw err;
-                            console.log('new item added to an existing todo list document array');
-                        });
-                    }
+                        // if the user does not already have a list in the collection then create one and pass their slack ID
+                        // as well as their list item as the first element in the list array
+                        else{
 
-                // if the user does not already have a list in the collection then create one and pass their slack ID
-                // as well as their list item as the first element in the list array
-                    else{
+                            list.create({
+                                _id: user_id,
+                                list: [
+                                    { _id: 0, listItem : listItem }
+                                ]
+                            }, function(err){
+                                if(err) throw err;
+                                console.log('added a new slack user todo list document into the collection');
 
-                         list.create({
-                             _id: user_id,
-                             list: [
-                                 { listItem : listItem }
-                             ]
-                         }, function(err){
-                             if(err) throw err;
-                             console.log('added a new slack user todo list document into the collection');
-
-                         });
-                    }
+                            });
+                        }
 
                     });
+                    break;
+                case 'view':
+                     break;
+                case 'complete':
+                    break;
+                case 'delete':
+                    break;
             }
 
-            // Delete a list item
-            if (command === 'delete') {
 
-            }
 
-            // Complete a list item
-            if (command === 'complete') {
-
-            }
-
-            // View the entire list
-            if (command === 'view') {
-
-            }
+            // if (command === 'add') {
+            //
+            //
+            // }
+            //
+            // // Delete a list item
+            // if (command === 'delete') {
+            //
+            // }
+            //
+            // // Complete a list item
+            // if (command === 'complete') {
+            //
+            // }
+            //
+            // // View the entire list
+            // if (command === 'view') {
+            //
+            // }
 
         // return a view back to slack to display to the user
             let data = {
