@@ -13,23 +13,43 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://chingu-todo:todoBOT@ds161121.mlab.com:61121/todo-bot');
 
 // create a schema for what is passed to the database
-let newListSchema = new mongoose.Schema({
+let listSchema = new mongoose.Schema({
     // either channel or user ID will replace the default _id created by the database
     _id: String,
     item: {
-        item: String,
-        created: Date,
+        id: String,
+        listItem: String,
+        timestampCreated: Date,
         completed: Boolean,
-        id: String
+        timestampCompleted: Date
     }
 });
 
+
+/*
+
+PLAN:
+
+1) check if a collection exists for the given ID (user or channel) - if collection exists proceed to 2)
+
+1a) if collection does not yet exist create it for that given user or channel ID
+
+2)
+    add: add a new document [list item] to that collection
+    delete: find the item based on its id [item.id] and remove it from the collection
+    view: iterate through the documents in the collection and display each: "[item.timestampCreated] item.listItem if(item.completed){ [ item.timestampCompleted ] }
+    done: find item based on its id [item.id] and edit item.completed to True
+
+3) after each add / delete / done is complete callback view
+
+ */
+
 // create model that implements the list Schema
-let listItem = mongoose.model('listItem', newListSchema);
+let list = mongoose.model('list', listSchema);
 
 
-// todoArray used for new todo lists
-let todoArray = [];
+// // todoArray used for new todo lists DEPRACATED
+// let todoArray = [];
 
 module.exports = function(app) {
 
@@ -44,7 +64,7 @@ module.exports = function(app) {
     });
 
     function handleQueries(req, res) {
-        // Validate token
+        // Validate slack app token
         if (req.token !== "nPJ9nsPaIBb9dv2MDtDRY7sL") {
             console.error("Invalid Token");
             return res.json({text: "Error: Invalid Token"});
