@@ -30,12 +30,12 @@ let listSchema = new mongoose.Schema({
 
 PLAN:
 
-1) check if a collection exists for the given ID (user or channel) - if collection exists proceed to 2)
+1) check if a document exists for the given ID (user or channel) - if document exists proceed to 2)
 
-1a) if collection does not yet exist create it for that given user or channel ID
+1a) if document does not yet exist create it for that given user or channel ID
 
 2)
-    add: add a new document [list item] to that collection
+    add: add a [list item] to that document
     delete: find the item based on its id [item.id] and remove it from the collection
     view: iterate through the documents in the collection and display each: "[item.timestampCreated] item.listItem if(item.completed){ [ item.timestampCompleted ] }
     done: find item based on its id [item.id] and edit item.completed to True
@@ -86,39 +86,40 @@ module.exports = function(app) {
             let command = req.text.substring(0, text.indexOf(' '));
             let listItem = req.text.substring(text.indexOf(' ')+1);
             let user_id = req.user_id;
+            let exists = false;
             // let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
 
 
             if (command === 'add') {
-                // Create todo object
-                // let todo = {
-                //     text: listItem,
-                //     completed: false,
-                //     time: timestamp,
-                //     id: (todoArray.length === 0 ? 1 : (todoArray.length + 1))
-                // };
 
-                let newItem = list(
-                    {_id: user_id,
-                        item: {
-                            id: 1,
-                            listItem: listItem,
-                        }
+                list.find({_id: user_id}, function(err, doc){
+                    if(doc.length > 0){
+                        // exists = true;
+                        console.log('exists');
+                        console.log(doc);
+
+                        // modify doc add new item
+
+
                     }
 
-                ).save(function(err){
-                    if(err) throw err;
-                    console.log('saved');
-                });
+                    else{
+                        let newItem = list(
+                            {_id: user_id,
+                                item: {
+                                    id: 1,
+                                    listItem: listItem,
+                                }
+                            }
 
-                // todoArray.forEach(function (e) {
-                //     if (e.id === todo.id) {
-                //         todo.id = todo.id + Number(Math.random().toFixed(1));
-                //     }
-                // });
+                        ).save(function(err){
+                            if(err) throw err;
+                            console.log('saved');
+                        });
+                    }
 
-                // Add to array
-                // commands.add(todoArray, todo);
+                    });
+
             }
 
             // Delete todo
@@ -144,7 +145,13 @@ module.exports = function(app) {
 
             // Get list
             if (command === 'list') {
-                commands.view(todoArray);
+                // commands.view(todoArray);
+
+                console.log('comman was list');
+
+                list.find({}, function(err, docs) {
+                    console.log(docs);
+                });
             }
 
             let data = {
