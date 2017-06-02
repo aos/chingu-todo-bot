@@ -8,10 +8,10 @@
  1a) if document does not yet exist create it for that given user or channel ID
 
  2)
- add: add a [list item] to that document
- delete: find the item based on its id [item.id] and remove it from the collection
- view: iterate through the documents in the collection and display each: "[item.timestampCreated] item.listItem if(item.completed){ [ item.timestampCompleted ] }
- done: find item based on its id [item.id] and edit item.completed to True
+ add: add a [list item] to that document's list array
+ complete: find item based on its id [item.id] and edit item.completed to True and add a timestamp
+ view: iterate through the documents in the collection and display each
+ delete: find the item based on its id [item.id] and splice it out of the list array
 
  3) after each add / delete / done is complete callback view
 
@@ -149,27 +149,6 @@ module.exports = function(app) {
                 if(err) throw err;
             });
 
-
-
-            // if (command === 'add') {
-            //
-            //
-            // }
-            //
-            // // Delete a list item
-            // if (command === 'delete') {
-            //
-            // }
-            //
-            // // Complete a list item
-            // if (command === 'complete') {
-            //
-            // }
-            //
-            // // View the entire list
-            // if (command === 'view') {
-            //
-            // }
 
         // return a view back to slack to display to the user
             let data = {
