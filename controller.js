@@ -19,8 +19,8 @@ let listSchema = new mongoose.Schema({
     item: {
         id: String,
         listItem: String,
-        timestampCreated: Date,
-        completed: Boolean,
+        timestampCreated: {type: Date, default: (Date.now() / 1000)},
+        completed: {type: Boolean, default: false},
         timestampCompleted: Date
     }
 });
@@ -44,12 +44,27 @@ PLAN:
 
  */
 
+
+
+
 // create model that implements the list Schema
 let list = mongoose.model('list', listSchema);
 
+// let newItem = list(
+//     {_id: user_id,
+//         item: {
+//             id: id,
+//             listItem: text,
+//         }
+//     }
+//
+// );
+
+
 
 // // todoArray used for new todo lists DEPRACATED
-// let todoArray = [];
+
+let todoArray = [];
 
 module.exports = function(app) {
 
@@ -73,15 +88,22 @@ module.exports = function(app) {
         // Get unix timestamp
         let timestamp = Math.round(Date.now() / 1000.0);
 
+
+        // check if a collection for that user / channel already exists
+
+
         if (req.text) {
             let text = req.text;
+            let command = req.text.substring(0, text.indexOf(' '));
+            let listItem = req.text.substring(text.indexOf(' ')+1);
             let user_id = req.user_id;
-            let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
+            // let users = text.match(/<@[A-Z0-9]*\|\w*>/g);
 
-            if (text.startsWith("add")) {
+
+            if (command === 'add') {
                 // Create todo object
                 let todo = {
-                    text: text.substring(4),
+                    text: listItem,
                     completed: false,
                     time: timestamp,
                     id: (todoArray.length === 0 ? 1 : (todoArray.length + 1))
@@ -98,7 +120,7 @@ module.exports = function(app) {
             }
 
             // Delete todo
-            if (text.startsWith("delete")) {
+            if (command === 'delete') {
                 // Get todo
                 let todo = text.substring(7);
                 // Delete from array
@@ -106,7 +128,7 @@ module.exports = function(app) {
             }
 
             // Complete todo
-            if (text.startsWith("done")) {
+            if (command === 'done') {
                 let todo = text.substring(5);
                 let todoTS = timestamp;
                 if (todo = Number(todo)) {
@@ -119,7 +141,7 @@ module.exports = function(app) {
             }
 
             // Get list
-            if (text.startsWith("list")) {
+            if (command === 'list') {
                 commands.view(todoArray);
             }
 
