@@ -47,12 +47,6 @@ let listSchema = new mongoose.Schema({
 // create model that implements the list Schema
 let list = mongoose.model('list', listSchema);
 
-
-// create a variable to store the list items as a string to pass to the response back to slack
-let outputString = '';
-
-
-
 // export the controller back to app.js
 module.exports = function(app) {
 
@@ -84,6 +78,9 @@ module.exports = function(app) {
                 user_id = req.user_id,
                 command,
                 listText;
+
+        // create a variable to store the list items as a string to pass to the response back to slack
+            let outputString = '';
 
         // a bug was presented when a user selected the "view" command because it is not followed by a space
         // the condition below corrects for this issue
@@ -194,6 +191,22 @@ module.exports = function(app) {
 
                               });
                            }
+
+                        });
+
+                    // after a deletion takes place iterate back through the array and update the IDs
+                    // of the remaining items
+                        doc[0].list.forEach(function(e,i){
+
+                            doc[0].list[i]._id = i;
+
+                            doc[0].save(function(err){
+                                if(err) throw err;
+
+                                console.log(`list item ids have been updated`);
+
+                            });
+
                         });
 
                         outputString = `List item ${listText} has been deleted!`;
