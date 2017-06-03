@@ -51,6 +51,11 @@ let listSchema = new mongoose.Schema({
 let list = mongoose.model('list', listSchema);
 
 
+// create a variable to store the list items as a string to pass to the response back to slack
+let outputString = '';
+
+
+
 // export the controller back to app.js
 module.exports = function(app) {
 
@@ -80,8 +85,20 @@ module.exports = function(app) {
         // (after the space) as seen by the substrings
             let text = req.text,
                 user_id = req.user_id,
-                command = req.text.substring(0, text.indexOf(' ')),
-                listText = req.text.substring(text.indexOf(' ')+1);
+                command,
+                listText;
+
+        // a bug was presented when a user selected the "view" command because it is not followed by a space
+        // the condition below corrects for this issue
+            if(text.indexOf(' ') !== -1){
+               command = req.text.substring(0, text.indexOf(' '));
+               listText = req.text.substring(text.indexOf(' ')+1);
+            }
+            else{
+                command = text;
+            }
+
+
 
     // search for the slack user's list based on their slack ID
             list.find({_id: user_id}, function(err, doc){
@@ -122,13 +139,31 @@ module.exports = function(app) {
 
                                 });
                             }
+                        outputString = 'New list item added succesfully!';
                         break;
+
                     case 'view':
-                         break;
+                    // iterates through the list and populates a string to be passed back to the user by the bot's response (res)
+                        function view(){
+                            doc[0].list.forEach(function(e){
+
+                                if(e.completed){
+                                    outputString += `\n${e._id} [X] <!date^${Date.parse(e.timestampCompleted)/1000}^(completed: {date_pretty} at {time}|failed to load>)\t${e.listItem}\n`;
+                                }
+                                else{
+                                    outputString += `\n${e._id} [  ] <!date^${Date.parse(e.timestampCreated)/1000}^(created: {date_pretty} @ {time}|failed to load>)\t${e.listItem}\n`;
+                                }
+
+                            });
+                        }
+                    // call the view function
+                        view();
+                        break;
+
                     case 'complete':
                     // iterates through the list array and marks the user's selection as complete
                         doc[0].list.forEach(function(e){
-                        // tests loose equality becaue the id is a number but the text passed by the user is a string
+                        // tests loose equality because the id is a number but the text passed by the user is a string
                             if(e._id == listText){
 
                         // marks the item as completed and adds a timestamp for the completion, saves to the database
@@ -141,27 +176,46 @@ module.exports = function(app) {
                                 });
                             }
                         });
+
+                        outputString = `List item ${listText} has been marked as complete`;
                         break;
+
                     case 'delete':
+                    // iterates through the list and splices out the desired list item, saves to the database
+                        doc[0].list.forEach(function(e, i){
+                           if(e._id == listText){
+                              doc[0].list.splice(i, 1);
+                              doc[0].save(function(err){
+                                  if(err) throw err;
+                                  console.log(`List item ${listText} has been deleted`);
+
+                              });
+                           }
+                        });
+
+                        outputString = `List item ${listText} has been deleted!`;
                         break;
                 }
 
                 if(err) throw err;
+
+            // dynamic responses based on the command that was issued (each has a unique outputString)
+                let data = {
+                    response_type: 'ephemeral',
+                    attachments: [
+                        {
+                            title: "Todo List",
+                            text: outputString
+                        }
+                    ]
+                };
+
+                res.json(data);
+
             });
 
 
-        // return a view back to slack to display to the user
-            let data = {
-                response_type: 'ephemeral',
-                attachments: [
-                    {
-                        title: "Todos",
-                        text: "```" + /*commands.view(todoArray) + */"```",
-                        mrkdwn_in: ["text"]
-                    }
-                ]
-            };
-            res.json(data);
+
         }
     }
 };
