@@ -1,1 +1,1 @@
-# slack-bot-demo
+# Slack ToDo List Bot

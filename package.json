@@ -4,12 +4,13 @@
   "description": "slack bot demo",
   "main": "app.js",
   "dependencies": {
-    "body-parser": "^1.17.1",
-    "express": "^4.15.2"
+    "body-parser": "^1.17.2",
+    "express": "^4.15.2",
+    "mongoose": "^4.10.4"
   },
   "devDependencies": {},
   "scripts": {
-    "start" : "node app.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
