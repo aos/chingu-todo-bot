@@ -153,8 +153,14 @@ module.exports = function(app) {
 
                             });
                         }
-                    // call the view function
-                        view();
+                    // if the list is empty notify the user, otherwise call view and populate the outputString
+                        if(doc[0].list.length === 0){
+                            outputString = 'The list is empty! Try the [add] command to populate it';
+                        }
+                        else{
+                            view();
+                        }
+
                         break;
 
                     case 'complete':
