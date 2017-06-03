@@ -17,9 +17,6 @@
 
  */
 
-// require the commands file which defines the commands the bot will accept from the user
-const commands = require('./commands');
-
 // require mongoose to enable interaction with mLab database
 const mongoose = require('mongoose');
 
@@ -213,9 +210,6 @@ module.exports = function(app) {
                 res.json(data);
 
             });
-
-
-
         }
     }
 };
