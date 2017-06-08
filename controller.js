@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
+const request = require('request');
+require('dotenv').config('private.env');
 
 // require dotenv to protect login credentials for the database
 require('dotenv').config({path: 'private.env'});
@@ -19,23 +21,46 @@ const dbQuery = require('./dbQuery');
 // helper function to validate token
 const helper = require('./helpers');
 
-// local testing
-// mongoose.connect('mongodb://localhost:27017/todo-bot');
-
 // deployment
 mongoose.connect(ROUTE);
 
 mongoose.connection.once('open', () => {
-  // console.log('Connected to DB.');
+  console.log('Connected to DB.');
 })
 .on('error', function(err) {
   console.log('Connection error:', err);
 });
 
+// Slack button
+app.get('/auth', (req, res) =>{
+    res.sendFile(__dirname + '/add_to_slack.html')
+})
+
+// Redirect URL
+app.get('/auth/redirect', (req, res) =>{
+    const options = {
+        uri: 'https://slack.com/api/oauth.access?code='
+            +req.query.code+
+            '&client_id='+process.env.CLIENT_ID+
+            '&client_secret='+process.env.CLIENT_SECRET+
+            '&redirect_uri='+process.env.REDIRECT_URI,
+        method: 'GET'
+    }
+    request(options, (error, response, body) => {
+        const JSONresponse = JSON.parse(body)
+        if (!JSONresponse.ok) {
+            console.log(JSONresponse);
+            res.send("Error encountered: \n"+JSON.stringify(JSONresponse)).status(200).end()
+        } 
+        else {
+            console.log(JSONresponse);
+            res.send("Success!")
+        }
+    })
+})
+
 // request made by user clicking button in interactive message
 router.post('/command', function(req, res){
-
-    console.log('command');
 
     let payload = JSON.parse(req.body.payload),
         token = payload.token,
@@ -43,8 +68,8 @@ router.post('/command', function(req, res){
         command,
         index;
 
-// validates the slack bot token passed by the user
-    if(helper.validate(token)){
+    // validates the slack bot token passed by the user
+    if (helper.validate(token)){
         // parse the payload and extract the ID, command, and index
         ID = payload.user.id;
         command = payload.actions[0].name;
@@ -54,15 +79,10 @@ router.post('/command', function(req, res){
         dbQuery(ID, command, index).then(function(data){
             res.json(data);
         });
-
-
     }
-
-    else{
+    else {
         res.json('Invalid Slack Bot token');
     }
-
-
 });
 
 // Handle POST requests
@@ -75,7 +95,7 @@ router.post('/', function(req, res) {
         command,
         text;
 
-    if(helper.validate(token)){
+    if (helper.validate(token)) {
 
         if (~rawText.indexOf(' ')) {
             // Get command and list text
@@ -90,14 +110,8 @@ router.post('/', function(req, res) {
         dbQuery(ID, command, text).then(function(data){
             res.json(data);
         });
-
     }
-
-    else{
-        console.log(req.body);
+    else {
         res.json('Invalid Slack Bot token');
     }
-
 });
-
-

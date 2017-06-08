@@ -13,10 +13,8 @@ function createUser(user_id, result) {
     return newUser;
   }
   else {
-    // console.log(`User ${result.id} found.`);
     return result;
   }
-
 }
 
 

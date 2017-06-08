@@ -2,9 +2,6 @@
  * Created by Vampiire on 6/7/17.
  */
 
-// mongoose
-    require('mongoose');
-
 // Load helper functions
 const helpers = require('./helpers');
 
@@ -64,7 +61,6 @@ function dbQuery(ID, command, text = null){
                 return {
                     text: 'Hi there! The list of commands available are:\n`add <message>` - Adds a todo to the list\n`view` - Shows your todo list'
                 };
-                break;
 
             default:
                 return {text: 'Invalid command! Type `/todo help` for more info.'};
@@ -98,8 +94,6 @@ function dbQuery(ID, command, text = null){
                 }
             ]
         };
-
     });
-
 }
 module.exports = dbQuery;
