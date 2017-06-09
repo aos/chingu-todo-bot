@@ -33,7 +33,7 @@ mongoose.connection.once('open', () => {
 
 // Slack button
 router.get('/', (req, res) =>{
-    res.sendFile(__dirname + '/public/index.html')
+    res.sendFile('./public/index.html')
 });
 
 // Redirect URL
