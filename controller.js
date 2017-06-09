@@ -11,6 +11,7 @@ const ROUTE = process.env.ROUTE;
 // Using routes instead of passing in app as a function, prevented some errors
 const router = module.exports = express.Router();
 
+
 // Use ES6 Promises to silence deprecation warning
 mongoose.Promise = global.Promise;
 
@@ -32,8 +33,10 @@ mongoose.connection.once('open', () => {
 
 // Slack button
 router.get('/', (req, res) =>{
-    res.sendFile(__dirname + '/homePage/index.html')
+    res.sendFile(__dirname + '/public/index.html')
 });
+
+router.get('/css.css', )
 
 // Redirect URL
 router.get('/auth/redirect', (req, res) => {
