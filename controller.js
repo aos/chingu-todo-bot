@@ -36,8 +36,6 @@ router.get('/', (req, res) =>{
     res.sendFile(__dirname + '/public/index.html')
 });
 
-router.get('/css.css', )
-
 // Redirect URL
 router.get('/auth/redirect', (req, res) => {
     const options = {
