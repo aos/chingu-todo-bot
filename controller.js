@@ -31,9 +31,9 @@ mongoose.connection.once('open', () => {
 });
 
 // Slack button
-router.get('/auth', (req, res) =>{
-    res.sendFile(__dirname + '/add_to_slack.html')
-})
+router.get('/', (req, res) =>{
+    res.sendFile(__dirname + '/homePage/index.html')
+});
 
 // Redirect URL
 router.get('/auth/redirect', (req, res) => {
@@ -44,7 +44,7 @@ router.get('/auth/redirect', (req, res) => {
             '&client_secret='+process.env.CLIENT_SECRET+
             '&redirect_uri='+process.env.REDIRECT_URI,
         method: 'GET'
-    }
+    };
     request(options, (error, response, body) => {
         const JSONresponse = JSON.parse(body)
         if (!JSONresponse.ok) {
@@ -56,7 +56,7 @@ router.get('/auth/redirect', (req, res) => {
             res.send("Success!")
         }
     })
-})
+});
 
 // request made by user clicking button in interactive message
 router.post('/command', function(req, res){
