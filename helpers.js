@@ -13,10 +13,8 @@ function createUser(user_id, result) {
     return newUser;
   }
   else {
-    // console.log(`User ${result.id} found.`);
     return result;
   }
-
 }
 
 
@@ -35,10 +33,10 @@ function view(list) {
   let outputString = "```";
   list.forEach((e) => {
     if (e.completed) {
-      outputString += `${(e.number < 10) ? (' '+e.number) : e.number} [X] ${e.listItem}\t\t<!date^${Date.parse(e.timestampCompleted)/1000}^(completed: {date_pretty} at {time}|failed to load>)\n`;
+      outputString += `[X] ${e.listItem}\t\t<!date^${Date.parse(e.timestampCompleted)/1000}^(completed: {date_pretty} at {time}|failed to load>)\n`;
     }
     else {
-      outputString += `${(e.number < 10) ? (' '+e.number) : e.number} [ ] ${e.listItem}\t\t<!date^${Date.parse(e.timestampCreated)/1000}^(created: {date_pretty} @ {time}|failed to load>)\n`;
+      outputString += `[ ] ${e.listItem}\t\t<!date^${Date.parse(e.timestampCreated)/1000}^(created: {date_pretty} @ {time}|failed to load>)\n`;
     }
   });
   return outputString + '```';
