@@ -10,7 +10,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 // call static files
-app.use('/public', express.static('public'));
+app.use('/public', express.static(__dirname + 'public'));
 
 // Using routes here
 app.use('/', controller);
