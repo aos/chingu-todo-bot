@@ -17,6 +17,10 @@ function dbQuery(ID, command, text = null){
 
         switch (command) {
             case 'add':
+                // If no text was passed, show list
+                if (!text) {
+                    break;
+                }
                 let length = user.list.length;
                 user.list.push({number: length, listItem: text});
                 user.save(function(err) {
