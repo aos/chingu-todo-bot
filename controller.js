@@ -31,12 +31,12 @@ mongoose.connection.once('open', () => {
 });
 
 // Slack button
-app.get('/auth', (req, res) =>{
+router.get('/auth', (req, res) =>{
     res.sendFile(__dirname + '/add_to_slack.html')
 })
 
 // Redirect URL
-app.get('/auth/redirect', (req, res) => {
+router.get('/auth/redirect', (req, res) => {
     const options = {
         uri: 'https://slack.com/api/oauth.access?code='
             +req.query.code+
