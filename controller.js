@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const express = require('express');
 const request = require('request');
-require('dotenv').config('private.env');
 
 // require dotenv to protect login credentials for the database
 require('dotenv').config({path: 'private.env'});
@@ -37,7 +36,7 @@ app.get('/auth', (req, res) =>{
 })
 
 // Redirect URL
-app.get('/auth/redirect', (req, res) =>{
+app.get('/auth/redirect', (req, res) => {
     const options = {
         uri: 'https://slack.com/api/oauth.access?code='
             +req.query.code+
