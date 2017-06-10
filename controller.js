@@ -47,14 +47,14 @@ router.get('/auth/redirect', (req, res) => {
         method: 'GET'
     };
     request(options, (error, response, body) => {
-        const JSONresponse = JSON.parse(body)
+        const JSONresponse = JSON.parse(body);
         if (!JSONresponse.ok) {
             console.log(JSONresponse);
             res.send("Error encountered: \n"+JSON.stringify(JSONresponse)).status(200).end()
         } 
         else {
             console.log(JSONresponse);
-            res.send("Success!")
+            res.redirect('/');
         }
     })
 });
