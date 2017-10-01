@@ -5,6 +5,8 @@ Chingu todo bot is here to help you remember!
 This is a lightweight bot that can handle private lists for each user of your team.
 It can be added team wide or in specific channels.
 
+![Features gif](https://i.imgur.com/V7lnm2z.gif)
+
 ## Features
 To add an item:  
 `/todo add <item>`
